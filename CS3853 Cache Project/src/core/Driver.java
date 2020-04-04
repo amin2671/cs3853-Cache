@@ -5,16 +5,22 @@ import java.util.ArrayList;
 
 import cache.Instruction;
 import cache.Parser;
+import output.Print;
+import parameters.CommandLine;
+import parameters.Parameters;
 
 public class Driver {
 
 	public static void main(String[] args) {
-		File trace = new File("Tiny Trace");
-		Parser test = new Parser(trace);
+		
+		CommandLine.readCommandLine(args);
+		Print.printHeader(args);
+		
+		Parser test = new Parser(Parameters.trace);
 		ArrayList<Instruction> list = test.generateInstructionList();
-		for(int i=0; i < list.size(); i++){
-			System.out.println(list.get(i));
-		}
+		
+		Print.print20Lines(list);
+		
 	}
 
 }

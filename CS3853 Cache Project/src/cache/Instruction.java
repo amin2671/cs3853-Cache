@@ -30,8 +30,8 @@ public class Instruction {
 	
 	public String toString(){
 		String info = "";
-		info += "Address: " + hexInstruct;
-		info += " Length: " + length;
+		info += hexInstruct + ": ";
+		info += length;
 		if(destaddress > 0){
 			info += " Destination Address: " + hexDest;
 		}

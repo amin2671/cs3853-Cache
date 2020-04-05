@@ -1,6 +1,5 @@
 package core;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import cache.Instruction;
@@ -15,12 +14,11 @@ public class Driver {
 		
 		CommandLine.readCommandLine(args);
 		Print.printHeader(args);
-		
+
 		Parser test = new Parser(Parameters.trace);
 		ArrayList<Instruction> list = test.generateInstructionList();
-		
+				
 		Print.print20Lines(list);
-		
 	}
 
 }

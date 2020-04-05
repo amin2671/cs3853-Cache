@@ -1,0 +1,3 @@
+Participation for M#1
+---------------------
+Andrew Min: Coded cache value calculations

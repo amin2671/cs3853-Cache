@@ -87,6 +87,16 @@ public class CommandLine {
 	}
 	
 	static void checkParameterValidity() {
+				
+		Set <Integer> cacheSizeSet = new HashSet <Integer>();
+		for (int i = 1; i <= Math.pow(2,13); i = i*2) {
+			cacheSizeSet.add(i);
+		}
+		
+		Set <Integer> blockSizeSet = new HashSet <Integer>();
+		for (int i = 4; i <= 64; i = i*2) {
+			blockSizeSet.add(i);
+		}
 		
 		Set <Integer> associativitySet = new HashSet <Integer>();
 		for (int i = 1; i <= 16; i = i*2) {
@@ -99,13 +109,13 @@ public class CommandLine {
 		policySet.add("LRU");
 		
 		
-		if (Parameters.cacheSize < 1 || Parameters.cacheSize > Math.pow(2, 13)) {
-			System.out.print("Error: cache size should be from 1 KB to 8 MB\n");
+		if (!cacheSizeSet.contains(Parameters.cacheSize)) {
+			System.out.print("Error: cache size should be a power of 2 from 1 KB to 8 MB\n");
 			System.exit(13);
 		}
 		
-		if (Parameters.blockSize < 4 || Parameters.blockSize > 64) {
-			System.out.print("Error: block size should be 4 to 64 bytes\n");
+		if (!blockSizeSet.contains(Parameters.blockSize)) {
+			System.out.print("Error: block size should be a power of 2 from 4 to 64 bytes\n");
 			System.exit(14);
 		}
 		

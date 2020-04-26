@@ -10,22 +10,22 @@ public class Instruction {
 		hexInstruct = instruct;
 		hexDest = dest;
 		hexSrc = src;
-		instructaddress = Integer.parseInt(instruct, 16);
-		destaddress = Integer.parseInt(dest, 16);
-		srcaddress = Integer.parseInt(src, 16);
+		//instructaddress = Integer.parseInt(instruct, 16);
+		//destaddress = Integer.parseInt(dest, 16);
+		//srcaddress = Integer.parseInt(src, 16);
 	}
 	
 	public int getLength() {
 		return length;
 	}
-	public int getInstructaddress() {
-		return instructaddress;
+	public String getInstructaddress() {
+		return hexInstruct;
 	}
-	public int getDestaddress() {
-		return destaddress;
+	public String getDestaddress() {
+		return hexDest;
 	}
-	public int getSrcaddress() {
-		return srcaddress;
+	public String getSrcaddress() {
+		return hexSrc;
 	}
 	
 	public String toString(){

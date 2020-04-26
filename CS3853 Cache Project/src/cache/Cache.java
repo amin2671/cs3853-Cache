@@ -1,50 +1,73 @@
 package cache;
 
+import java.lang.Math;
+import java.util.ArrayList;
+
 public class Cache {
 	int cacheSize, blockSize, associativity;
 	String replacementPolicy;
+	ArrayList<Instruction> list;
 	
-	public Cache(int cSize, int bSize, int association, String rp) {
+	public Cache(int cSize, int bSize, int association, String rp, ArrayList<Instruction> L) {
 		cacheSize = cSize;
 		blockSize = bSize;
 		associativity = association;
 		replacementPolicy = rp;
+		list = L;
 	}
 	
 	public int totalBlocks() {
-		int blockCalc = cacheSize / blockSize;
-		blockCalc *= 1024;
-		return blockCalc;
+		return (cacheSize / blockSize) * 1024;
+	}
+	
+	public int totalRows() {
+		return totalBlocks() / associativity;
 	}
 	
 	public int indexSize() {
-		int indexCalc = totalBlocks() / associativity;
-		indexCalc = ((int) (Math.log(indexCalc) / Math.log(2)+1e-10));
-		return indexCalc;
+		return ((int) (Math.log(totalRows()) / Math.log(2)+1e-10));
 	}
 	
 	public int offsetSize() {
-		int offsetCalc = (int) (Math.log(blockSize) / Math.log(2)+1e-10);
-		return offsetCalc;
+		return (int) (Math.log(blockSize) / Math.log(2)+1e-10);
 	}
 	
 	public int tagSize() {
-		int tagCalc = 32 - indexSize() - offsetSize();
-		return tagCalc;
+		return 32 - indexSize() - offsetSize();
 	}
 	
 	public int overheadSize() {
-		int overCalc = ((tagSize() + 1) * (int) (Math.pow(2, (int) (Math.log(totalBlocks()) / Math.log(2)+1e-10)))) / 8;
-		return overCalc;
+		return ((tagSize() + 1) * (int) (Math.pow(2, (int) (Math.log(totalBlocks()) / Math.log(2)+1e-10)))) / 8;
 	}
 	
 	public double implementSize() {
-		int iCalc = cacheSize + (overheadSize() / 1024);
-		return iCalc;
+		return cacheSize + (overheadSize() / 1024);
 	}
 	
 	public double cost() {
-		double costCalc = implementSize() * 0.05;
-		return costCalc;
+		return implementSize() * 0.05;
+	}
+	
+	public int totalAccess() {
+		int accesses = 0;
+		for (int i=0; i<list.size(); i++) {
+			if(!(list.get(i).getDestaddress().equals("00000000")))
+				accesses++;
+			if(!(list.get(i).getSrcaddress().equals("00000000")))
+				accesses++;
+			accesses++;
+		}
+		return accesses;
+	}
+	
+	public int instructions() {
+		int temp = totalAccess();
+		for (int i=0; i<list.size(); i++) {
+			if(!(list.get(i).getDestaddress().equals("00000000")))
+				temp--;
+			if(!(list.get(i).getSrcaddress().equals("00000000")))
+				temp--;
+		}
+		return temp;
 	}
 }

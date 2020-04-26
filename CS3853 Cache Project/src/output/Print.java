@@ -9,7 +9,7 @@ import parameters.Parameters;
 
 public class Print {
 	
-	public static void printHeader(String [] args) {
+	public static void printHeader() {
 		Cache cache = new Cache(Parameters.cacheSize, Parameters.blockSize, Parameters.associativity, Parameters.policy);
 		
 		System.out.printf("Cache Simulator CS 3853 Spring 2020 - Group #19\n\n");

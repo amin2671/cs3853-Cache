@@ -13,12 +13,11 @@ public class Driver {
 	public static void main(String[] args) {
 		
 		CommandLine.readCommandLine(args);
-		Print.printHeader(args);
+		Print.printHeader();
 
 		Parser test = new Parser(Parameters.trace);
 		ArrayList<Instruction> list = test.generateInstructionList();
 				
-		Print.print20Lines(list);
 	}
 
 }

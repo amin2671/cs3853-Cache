@@ -1,12 +1,14 @@
 package cache;
 
 import java.lang.Math;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Cache {
-	int cacheSize, blockSize, associativity;
+	public int cacheSize, blockSize, associativity, hitCount, compulsoryMissCount, conflictMissCount;
+	Map <Integer, List <Integer>> cacheMap;
 	String replacementPolicy;
 	ArrayList<Instruction> list;
+	
 	
 	public Cache(int cSize, int bSize, int association, String rp, ArrayList<Instruction> L) {
 		cacheSize = cSize;
@@ -14,6 +16,12 @@ public class Cache {
 		associativity = association;
 		replacementPolicy = rp;
 		list = L;
+		cacheMap = new HashMap();
+		
+		hitCount = 0;
+		compulsoryMissCount = 0;
+		conflictMissCount = 0;
+		populateCache();
 	}
 	
 	public int totalBlocks() {
@@ -46,6 +54,72 @@ public class Cache {
 	
 	public double cost() {
 		return implementSize() * 0.05;
+	}
+	
+	private void populateCache() {
+		
+		for (Instruction i : list) {
+			
+			parseInstruction(Integer.parseInt(i.getInstructaddress(), 16), i.getLength());
+			if (Integer.parseInt(i.getDestaddress(), 16) != 0) {
+				parseInstruction(Integer.parseInt(i.getDestaddress(), 16), 4);
+			}
+			if (Integer.parseInt(i.getSrcaddress(), 16) != 0)
+			parseInstruction(Integer.parseInt(i.getSrcaddress(), 16), 4);
+		}
+		
+	}
+	
+	void parseInstruction(int address, int length) {
+		
+		int offset = address % (int) Math.pow(2,offsetSize());
+		address = address / (int) Math.pow(2,offsetSize());
+		int index = address % (int) Math.pow(2,indexSize());
+		int tag = address / (int) Math.pow(2,indexSize());
+		
+		for (int bytesRemaining = length + offset; bytesRemaining > 0; bytesRemaining -= blockSize) {
+			if (!cacheMap.containsKey(index)) {
+				cacheMap.put(index, new LinkedList<Integer>());
+			}
+			
+			boolean hit = false;
+			for (Integer blockTag : cacheMap.get(index)) {
+				if (blockTag == tag) {
+					hit = true;
+					break;
+				}
+			}
+			
+			if (hit == true) {
+				++hitCount;
+			}
+			else {
+				addTag(index, tag);
+			}
+			
+			++index;
+		}
+		
+		
+	}
+	
+	void addTag(int index, int tag) {
+		cacheMap.get(index).add(tag);
+		
+		if (cacheMap.get(index).size() > associativity) {
+			
+			++conflictMissCount;
+			
+			if (replacementPolicy.equals("RR")) {
+				cacheMap.get(index).remove(0);
+			}
+			else {
+				cacheMap.get(index).remove( (int) Math.floor(Math.random() * cacheMap.get(index).size()));
+			}
+		}
+		else {
+			++compulsoryMissCount;
+		}
 	}
 	
 	public int totalAccess() {

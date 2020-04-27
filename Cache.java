@@ -101,7 +101,14 @@ public class Cache {
 				addTag(index, tag);
 				cycles=cycles+3;
 			}
-			++index;
+			
+			if (index == totalRows() - 1) {
+				index = 0;
+			}
+			
+			else {
+				++index;
+			}
 		}
 		
 		

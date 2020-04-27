@@ -19,8 +19,9 @@ public class Parser {
 		String instAdd = lineOne.substring(10,18);
 		String destAdd = lineTwo.substring(6,14);
 		String srcAdd = lineTwo.substring(33, 41);
-		Instruction instruct = new Instruction(Integer.parseInt(len),instAdd, destAdd,srcAdd);
-		//System.out.println("Length: " + len + " Inst Add: " + instAdd+ "Dest Add: " + destAdd + " Src Add: " + srcAdd);
+		
+		Instruction instruct = new Instruction(Integer.parseInt(len), instAdd, destAdd, srcAdd);
+		
 		return instruct;
 	}
 	

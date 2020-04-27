@@ -4,12 +4,11 @@ import java.lang.Math;
 import java.util.*;
 
 public class Cache {
-	public int cacheSize, blockSize, associativity, hitCount, compulsoryMissCount, conflictMissCount;
+	public int cacheSize, blockSize, associativity, hitCount, compulsoryMissCount, conflictMissCount, cycles, instructions;
 	Map <Integer, List <Integer>> cacheMap;
 	String replacementPolicy;
 	ArrayList<Instruction> list;
-	
-	
+
 	public Cache(int cSize, int bSize, int association, String rp, ArrayList<Instruction> L) {
 		cacheSize = cSize;
 		blockSize = bSize;
@@ -18,6 +17,7 @@ public class Cache {
 		list = L;
 		cacheMap = new HashMap();
 		
+		cycles = 0;
 		hitCount = 0;
 		compulsoryMissCount = 0;
 		conflictMissCount = 0;
@@ -51,31 +51,34 @@ public class Cache {
 	public double implementSize() {
 		return cacheSize + (overheadSize() / 1024);
 	}
-	
+
 	public double cost() {
 		return implementSize() * 0.05;
 	}
 	
 	private void populateCache() {
-		
-		for (Instruction i : list) {
-			
+		for (Instruction i: list) {
+			instructions += 1;
+			cycles += 2;
+
 			parseInstruction(Long.parseLong(i.getInstructaddress(), 16), i.getLength());
 			if (Long.parseLong(i.getDestaddress(), 16) != 0) {
-				parseInstruction(Long.parseLong(i.getDestaddress(), 16), 4);
+				parseInstruction(Long.parseLong(i.getDestaddress().trim(), 16), 4);
+				cycles++;
 			}
-			if (Long.parseLong(i.getSrcaddress(), 16) != 0)
-			parseInstruction(Long.parseLong(i.getSrcaddress(), 16), 4);
+			if (Long.parseLong(i.getSrcaddress(), 16) != 0) {
+				parseInstruction(Long.parseLong(i.getSrcaddress().trim(), 16), 4);
+				cycles++;
+			}
 		}
-		
 	}
-	
+
 	void parseInstruction(long address, int length) {
 		
-		int offset = (int) (address % (long) Math.pow(2,offsetSize()));
-		address = address / (int) Math.pow(2,offsetSize());
-		int index = (int) (address % (long) Math.pow(2,indexSize()));
-		int tag = (int) (address / (long) Math.pow(2,indexSize()));
+		int offset = (int) address % (int) Math.pow(2,offsetSize());
+		address /= (int) Math.pow(2,offsetSize());
+		int index = (int) address % (int) Math.pow(2,indexSize());
+		int tag = (int) address / (int) Math.pow(2,indexSize());
 		
 		for (int bytesRemaining = length + offset; bytesRemaining > 0; bytesRemaining -= blockSize) {
 			if (!cacheMap.containsKey(index)) {
@@ -83,28 +86,24 @@ public class Cache {
 			}
 			
 			boolean hit = false;
-			for (Integer blockTag : cacheMap.get(index)) {
+			for (Integer blockTag : cacheMap.get(index))
 				if (blockTag == tag) {
 					hit = true;
 					break;
 				}
-			}
-			
+
 			if (hit == true) {
 				++hitCount;
+				cycles++;
 			}
 			else {
 				addTag(index, tag);
+				cycles += 3 * Math.ceil(blockSize / 4);
 			}
-			
-			
-			if (index == totalRows() - 1) {
+			if (index == totalRows() - 1)
 				index = 0;
-			}
-			
-			else {
+			else
 				++index;
-			}
 		}
 		
 		
@@ -114,41 +113,26 @@ public class Cache {
 		cacheMap.get(index).add(tag);
 		
 		if (cacheMap.get(index).size() > associativity) {
-			
 			++conflictMissCount;
-			
-			if (replacementPolicy.equals("RR")) {
+
+			if (replacementPolicy.equals("RR"))
 				cacheMap.get(index).remove(0);
-			}
-			else {
+			else
 				cacheMap.get(index).remove( (int) Math.floor(Math.random() * cacheMap.get(index).size()));
-			}
 		}
-		else {
+		else
 			++compulsoryMissCount;
-		}
 	}
-	
-	public int totalAccess() {
-		int accesses = 0;
-		for (int i=0; i<list.size(); i++) {
-			if(!(list.get(i).getDestaddress().equals("00000000")))
-				accesses++;
-			if(!(list.get(i).getSrcaddress().equals("00000000")))
-				accesses++;
-			accesses++;
-		}
-		return accesses;
+
+	public int unusedCache() {
+		return totalBlocks() - compulsoryMissCount;
 	}
-	
-	public int instructions() {
-		int temp = totalAccess();
-		for (int i=0; i<list.size(); i++) {
-			if(!(list.get(i).getDestaddress().equals("00000000")))
-				temp--;
-			if(!(list.get(i).getSrcaddress().equals("00000000")))
-				temp--;
-		}
-		return temp;
+
+	public double unusedKB() {
+		return (double) (unusedCache() * implementSize()) / totalBlocks();
+	}
+
+	public double waste() {
+		return unusedKB() * 0.05;
 	}
 }

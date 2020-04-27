@@ -60,22 +60,22 @@ public class Cache {
 		
 		for (Instruction i : list) {
 			
-			parseInstruction(Integer.parseInt(i.getInstructaddress(), 16), i.getLength());
-			if (Integer.parseInt(i.getDestaddress(), 16) != 0) {
-				parseInstruction(Integer.parseInt(i.getDestaddress(), 16), 4);
+			parseInstruction(Long.parseLong(i.getInstructaddress(), 16), i.getLength());
+			if (Long.parseLong(i.getDestaddress(), 16) != 0) {
+				parseInstruction(Long.parseLong(i.getDestaddress(), 16), 4);
 			}
-			if (Integer.parseInt(i.getSrcaddress(), 16) != 0)
-			parseInstruction(Integer.parseInt(i.getSrcaddress(), 16), 4);
+			if (Long.parseLong(i.getSrcaddress(), 16) != 0)
+			parseInstruction(Long.parseLong(i.getSrcaddress(), 16), 4);
 		}
 		
 	}
 	
-	void parseInstruction(int address, int length) {
+	void parseInstruction(long address, int length) {
 		
-		int offset = address % (int) Math.pow(2,offsetSize());
+		int offset = (int) (address % (long) Math.pow(2,offsetSize()));
 		address = address / (int) Math.pow(2,offsetSize());
-		int index = address % (int) Math.pow(2,indexSize());
-		int tag = address / (int) Math.pow(2,indexSize());
+		int index = (int) (address % (long) Math.pow(2,indexSize()));
+		int tag = (int) (address / (long) Math.pow(2,indexSize()));
 		
 		for (int bytesRemaining = length + offset; bytesRemaining > 0; bytesRemaining -= blockSize) {
 			if (!cacheMap.containsKey(index)) {

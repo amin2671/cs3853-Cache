@@ -97,7 +97,14 @@ public class Cache {
 				addTag(index, tag);
 			}
 			
-			++index;
+			
+			if (index == totalRows() - 1) {
+				index = 0;
+			}
+			
+			else {
+				++index;
+			}
 		}
 		
 		

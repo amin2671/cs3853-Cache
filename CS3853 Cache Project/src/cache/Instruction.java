@@ -3,32 +3,27 @@ package cache;
 public class Instruction {
 	private int length;
 	private long instructaddress, destaddress, srcaddress;
-	private String hexInstruct, hexDest, hexSrc;
 
-	public Instruction(int length, String instruct, String dest, String src){
+	public Instruction(int length, String instruct, String dest, String src) {
 		this.length = length;
-		hexInstruct = instruct;
-		hexDest = dest;
-		hexSrc = src;
-		
-		instructaddress = 0;
-		destaddress = 0;
-		srcaddress = 0;
+		instructaddress = Long.parseLong(instruct, 16);
+		destaddress = Long.parseLong(dest, 16);;
+		srcaddress = Long.parseLong(src, 16);;
 	}
 
 	public int getLength() {
 		return length;
 	}
 
-	public String getInstructaddress() {
-		return hexInstruct;
+	public long getInstructaddress() {
+		return instructaddress;
 	}
 
-	public String getDestaddress() {
-		return hexDest;
+	public long getDestaddress() {
+		return destaddress;
 	}
 
-	public String getSrcaddress() {
-		return hexSrc;
+	public long getSrcaddress() {
+		return srcaddress;
 	}
 }

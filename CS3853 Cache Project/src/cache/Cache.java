@@ -26,7 +26,7 @@ public class Cache {
 	}
 
 	public int totalBlocks() {
-		return (cacheSize / blockSize) * 1024;
+		return (cacheSize * 1024) / blockSize;
 	}
 
 	public int totalRows() {

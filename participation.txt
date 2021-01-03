@@ -1,5 +1,0 @@
-Participation for M#1
----------------------
-Andrew Min: 	Coded cache value calculations
-Connor Guerra:	Coded parser and instruction
-Austin Pena:	Coded command line and print statements

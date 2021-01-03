@@ -11,7 +11,7 @@ Replace only the words that are capitalized.
 Example using a file in the repository:
 java -jar group19milestone1.exe -f TinyTrace -s 4096 -b 32 -a 2 -r RR
 
-
+\n
 
 FILENAME: 	File to be analyzed
 
